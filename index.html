@@ -130,8 +130,8 @@
     <div id="overlay">
       <h2>Mapping the Legacy of the <i>Weinberg v. Romero Barcelo</i> Supreme Court Case</h2>
       <h3>(read the Supreme Court opinion on Weinberg v. Romero-Barcelo <a href="https://supreme.justia.com/cases/federal/us/456/305/#tab-opinion-1954493">here</a>)</h3>
-      <button onclick="myFunction()">Hide This Information</button>
-      <div id="overlay-info">
+     <button onclick="myFunction()">Hide This Information</button>
+      
       
       <h3>This web-map is part of a long-term project of the Carolina Cartography Collective to create geovisualizations and other resources related to environmental, social, and political issues in Vieques, Puerto Rico.
         Vieques was occupied by the U.S. Navy between 1940 and 2001, during which time it was used for bomb testing, ground-warfare, and amphibuous training exercises.<br>
@@ -145,7 +145,7 @@
         the case was heard. The resulting information is displayed here.<br><br>
         Tools used to do all of this include Lexis Nexis, R, GitHub, and Leaflet (and the associated HTML, CSS, and JavaScript). Eventually, this wev-map will be accompanied by a step-by-step guide to how the data used to make this map was created, because it could be useful for others
         interested in doing research related to legal history and environmental justice.
-      </div>
+      
     </div>
 
     <div id="map"></div>
@@ -159,7 +159,7 @@
     <script type="text/javascript">
 
           function myFunction() {
-        var x = document.getElementById("overlay-info");
+        var x = document.getElementById("overlay");
         if (x.style.display === "none") {
           x.style.display = "block";
         } else {
