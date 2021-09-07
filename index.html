@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The Legacy of Weinberg v. Romero-Barcelo</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="docs/images/favicon.ico"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""
+
+      
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="jquery-3.5.1.min.js"></script>
+    <style>
+    html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      
+       #map {
+        width: 100%;
+        height: 100%;
+      }
+
+      #overlay {
+        position: absolute;
+        z-index: 1000;
+        background: rgba(255,255,255,0.7);
+        padding: 10px;
+        right: 20%;
+        left: 20%;
+        bottom: 120px;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 1px 1px 1px grey;
+        text-align: center;
+      }
+
+      #overlay h2 {
+        margin: 0;
+        padding: 0;
+        margin-bottom: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+      }
+
+      #overlay h3 {
+        margin: 0;
+        padding: 0;
+        margin-bottom: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: small;
+        font-weight: normal;
+      }
+
+      #slide-in {
+        padding: 10px;
+        position: absolute;
+        width: 250px;
+        z-index: 1000;
+        background: white;
+        margin-left: -270px;
+        transition: 1.5s;
+      }
+
+      #slide-in.in {
+        margin-left: 0px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+
+    <!-- <div id="slide-in">
+      <h2>More Information</h2>
+      <div id="output"></div>
+    </div> -->
+
+    <!-- <div id="overlay">
+      <h2>Hello!</h2>
+      <button id="advanced">Advanced Toggle</button>
+    </div> -->
+
+    <div id="overlay">
+      <h2>Mapping the Legacy of the <i>Weinberg v. Romero Barcelo</i> Supreme Court Case</h2>
+      <h3>This mapping project is part of a long-term project of the Carolinca Cartography Collective to create geovisualizations and other resources related to environmental, social, and political issues in Vieques, Puerto Rico.
+        Vieques was occupied by the U.S. Navy between 1940 and 2001, during which time it was used for bomb testing, ground-warfare, and amphibuous training exercises.<br>
+        In 1978, a group of community organizers from Vieques, along with the Puerto Rican Governor Carlos Romero-Barceló, filed a lawsuit against the Navy for the impact it was having on the ecology of the island and its roughly
+        10,000 residents.
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>"
+    <script src="https://npmcdn.com/@turf/turf.min.js"></script>
+    <script type="text/javascript" src="weinberg-cases.js"></script>
+    <script src="weinberg-cases.json"></script>
+    
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+
+      $('#slide-in').height(window.innerHeight);
+
+      $(document).on('click', '#advanced', function(){
+        if($('#slide-in').hasClass('in')) {
+          $('#slide-in').removeClass('in')
+        } else {
+          $('#slide-in').addClass('in')
+        }
+      })
+
+      var map = L.map("map").setView([34.95, -94.533], 5);
+
+    var osm = new L.tileLayer(
+      "http://{s}.tile.osm.org/{z}/{x}/{y}.png", 
+      {attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>'}
+    ).addTo(map);
+
+
+
+    //     L.geoJSON(cases, {
+    //     pointToLayer: function (feature, latlng) {
+    //         return L.circleMarker(latlng, geojsonMarkerOptions);
+    //     },
+    //     onEachFeature: onEachFeature
+    // }).addTo(map);
+
+    // var geojsonMarkerOptions = {
+    //     radius: 8,
+    //     fillColor: "#ff7800",
+    //     color: "#000",
+    //     weight: 0,
+    //     opacity: 1,
+    //     fillOpacity: 0.3
+    // };
+
+    // function onEachFeature(feature, layer) {
+    //     if (feature.properties && feature.properties.Case) {
+    //         layer.bindPopup(feature.properties.Case);
+    //     }
+    // }
+
+    var casesGeoJSON = false;
+    var casesPointsArray = [];
+
+    // fetch('https://api.npoint.io/df5b4d68eb317e6b4d00',{
+    //    method: 'GET'
+    // })
+    // .then(response => response.json())
+    // .then(json => {
+      
+    //   console.log(json)
+    //   var geojson = L.geoJSON(json, {
+    //     style: function(feature){
+    //       return{
+    //         fillOpacity: 0.5
+    //       };
+    //     }
+    //   }).addTo(map);
+    // })
+    // .catch(error => console.log(error.message));
+    
+    var gavelIcon = L.icon({
+    iconUrl: 'gavel.png',
+        iconSize:     [25, 25], // size of the icon
+        iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+        popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+
+
+    fetch('https://api.npoint.io/df5b4d68eb317e6b4d00',{
+       method: 'GET'
+    })
+    .then(response => response.json())
+    .then(json => {
+
+    // json.feature.forEach(function(feature){
+    //   $('#output').append(feauture.properties.terms)
+    // })
+
+    var markers = L.markerClusterGroup();
+    json.features.forEach(function(feature){
+      console.log()
+      markers.addLayer(
+        L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0],], {icon: gavelIcon},
+        
+        ).bindPopup('<b>Case: </b>'+feature.properties.Case +'<br>' + '<b>Court: </b>' + feature.properties.Court + '<br>' + '<b>Key terms from case: </b>' + feature.properties.terms  + '<br>' + '<b>How <i>Weinberg v. Romero-Barcelo</i> was cited in this case: </b>'+ feature.properties.romero)
+        );
+    });
+    map.addLayer(markers)
+  }).addTo(map);
+
+
+  // $(document).on('click', '#output', function(e){
+  //   var newCase = e.target.value;
+  // })
+    // casesGeoJSON = L.geoJSON(json, {
+    //   style: function (feature){
+    //     return {
+    //       fillOpacity: 0.1,
+    //       fillColor: '#000',
+    //       color: '#000',
+    //       opacity: 0.3
+    //     };
+    //   }
+
+    // var markers = L.markerClusterGroup();
+    // json.features.forEach(function(feature){
+    //   console.log()
+    //   markers.addLayer(L.marker(feature.geometry.coordinates[1], feature.geometry.coordinates[0]));
+    // })
+    // map.addLayer(markers);
+
+    // var markers = L.markerClusterGroup();
+    // cases.feature.forEach(function(feature){
+    //   markers.addLayer(L.marker(feature.geometry.coordinates));
+    // })
+    // map.addLayer(markers);
+
+    // L.geoJSON(cases, {
+    //     pointToLayer: function (feature, latlng) {
+    //         return L.circleMarker(latlng, geojsonMarkerOptions);
+    //     },
+    //     onEachFeature: onEachFeature
+    // }).addTo(map);
+
+
+    // var markers = L.markerClusterGroup();
+
+
+    
+    // var clusterMapPoints = [];
+    //   json.features.forEach(function(feature){
+    //     markers.addLayer(L.marker(feature.geometry.coordinates[1], feature.geometry.coordinates[0]));
+    //   })
+    //   map.addLayer(markers);
+    //     })
+      
+
+    })
+        
+    </script>
+  </body>
+</html>
