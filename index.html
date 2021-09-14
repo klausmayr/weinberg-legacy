@@ -41,69 +41,58 @@
         height: 100%;
       }
 
-      #how-to {
-        position: absolute;
-        z-index: 1000;
-        padding: 10px;
-        right: 20%;
-        left: 20%;
-        top: 40px;
+      #slide-in h2 {
         margin: 0;
-        opacity: 0.6;
-        text-align: center;
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: normal;
-      }
-
-      #overlay {
-        position: absolute;
-        z-index: 1000;
-        background: rgba(255,255,255,0.7);
-        padding: 10px;
-        right: 20%;
-        left: 20%;
-        bottom: 125px;
-        overflow: scroll;
-        margin: 0;
-        border-radius: 0;
-        box-shadow: 1px 1px 1px grey;
-        text-align: center;
-      }
-
-      #overlay h2 {
-        margin: 0;
-        padding: 0;
-        margin-bottom: 0;
-        font-size: 30px;
-        font-family: Arial, Helvetica, sans-serif;
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        font-family: 'Inconsolata', monospace;
+        font-size: 18pt;
         font-weight: bold;
       }
-      
-      #overlay button {
-        margin: 3px;
-        padding: 2px;
-      }
-      #overlay h3 {
+      #slide-in h3 {
         margin: 0;
-        padding: 0;
+        padding-left: 20px;
+        padding-right: 20px;
         margin-bottom: 10px;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: small;
+        margin-top: 10px;
+        font-family: 'Inconsolata', monospace;
+        font-size: 12pt;
         font-weight: normal;
       }
 
       #slide-in {
-        padding: 10px;
+        height: 100%;
         position: absolute;
-        width: 250px;
+        width: 390px;
         z-index: 1000;
-        background: white;
-        margin-left: -270px;
-        transition: 1.5s;
+        background: #ffd7d9;
+        margin-left: 0px;
+        transition: 1s;
+        overflow: scroll;
       }
 
       #slide-in.in {
-        margin-left: 0px;
+        margin-left: -420px;
+      }
+
+      #info-button {
+          position: absolute;
+          z-index: 1000;
+      }
+
+      #advanced {
+      background-color: #750e13;
+      width: 390px;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 18px;
+        font-family: 'Inconsolata', monospace;
       }
 
     </style>
@@ -111,33 +100,11 @@
 
   <body>
 
-    <!-- <div id="slide-in">
-      <h2>More Information</h2>
-      <div id="output"></div>
-    </div> -->
 
-    <!-- <div id="overlay">
-      <h2>Hello!</h2>
-      <button id="advanced">Advanced Toggle</button>
-    </div> -->
-
-    <div id="how-to">
-      <h2>Zoom in and click on the gavel icons to learn more about each case
-      </h2>
-      <button onclick="myFunction2()">Hide</button>
-    </div>
-    
-    <div id="overlay">
-      <h2>Mapping the Legacy of the <i>Weinberg v. Romero Barcelo</i> Supreme Court Case</h2>
-      
-      <button onclick="myFunction()">Hide This Information</button>
-      
-      <div id="overlay-info">
-      <h3>(read the Supreme Court opinion on Weinberg v. Romero-Barcelo <a href="https://supreme.justia.com/cases/federal/us/456/305/#tab-opinion-1954493">here</a>)</h3>
-     
-      
-      
-      <h3>This web-map is part of a long-term project of the Carolina Cartography Collective to create geovisualizations and other resources related to environmental, social, and political issues in Vieques, Puerto Rico.
+    <div id="slide-in">
+      <h2><br><br><br>The Legacy of the <i>Weinberg v. Romero-Barcelo</i> Supreme Court Case</h2>
+      <h3><br><b>(read the Supreme Court opinion on Weinberg v. Romero-Barcelo <a href="https://supreme.justia.com/cases/federal/us/456/305/#tab-opinion-1954493">here</a>)</b><br><br>
+      This web-map is part of a long-term project of the Carolina Cartography Collective to create geovisualizations and other resources related to environmental, social, and political issues in Vieques, Puerto Rico.
         Vieques was occupied by the U.S. Navy between 1940 and 2001, during which time it was used for bomb testing, ground-warfare, and amphibuous training exercises.<br>
         In 1978, a group of community organizers from Vieques, along with the Puerto Rican Governor Carlos Romero-Barceló, filed a lawsuit against the Navy for the impact it was having on the ecology of the island and its roughly
         10,000 residents. The case was heard in the U.S. District Court for the District of Puerto Rico, appealed, heard in the U.S. Court of Appeals for the First District, appealed again, and finally heard in the Supreme Court in 1982.<br>
@@ -149,10 +116,16 @@
         the case was heard. The resulting information is displayed here.<br><br>
         Tools used to do all of this include Lexis Nexis, R, GitHub, and Leaflet (and the associated HTML, CSS, and JavaScript). Eventually, this web-map will be accompanied by a step-by-step guide to how the data used to make this map was created, because it could be useful for others
         interested in doing research related to legal history and environmental justice.
-      </div>
+      </h3>
     </div>
 
-    <div id="map"></div>
+    <div id="info-button">
+      <button id="advanced">Click to Show/Hide<br>Information Box</button>
+    </div>
+
+
+      <div id="map"></div>
+
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
@@ -192,7 +165,11 @@
         }
       })
 
-      var map = L.map("map").setView([34.95, -94.533], 5);
+      var map = L.map("map", {zoomControl: false}).setView([34.95, -104], 5);
+
+      L.control.zoom({
+          position: 'topright'
+      }).addTo(map);
 
     var osm = new L.tileLayer(
       "http://{s}.tile.osm.org/{z}/{x}/{y}.png", 
@@ -200,48 +177,9 @@
     ).addTo(map);
 
 
-
-    //     L.geoJSON(cases, {
-    //     pointToLayer: function (feature, latlng) {
-    //         return L.circleMarker(latlng, geojsonMarkerOptions);
-    //     },
-    //     onEachFeature: onEachFeature
-    // }).addTo(map);
-
-    // var geojsonMarkerOptions = {
-    //     radius: 8,
-    //     fillColor: "#ff7800",
-    //     color: "#000",
-    //     weight: 0,
-    //     opacity: 1,
-    //     fillOpacity: 0.3
-    // };
-
-    // function onEachFeature(feature, layer) {
-    //     if (feature.properties && feature.properties.Case) {
-    //         layer.bindPopup(feature.properties.Case);
-    //     }
-    // }
-
     var casesGeoJSON = false;
     var casesPointsArray = [];
 
-    // fetch('https://api.npoint.io/df5b4d68eb317e6b4d00',{
-    //    method: 'GET'
-    // })
-    // .then(response => response.json())
-    // .then(json => {
-      
-    //   console.log(json)
-    //   var geojson = L.geoJSON(json, {
-    //     style: function(feature){
-    //       return{
-    //         fillOpacity: 0.5
-    //       };
-    //     }
-    //   }).addTo(map);
-    // })
-    // .catch(error => console.log(error.message));
     
     var gavelIcon = L.icon({
     iconUrl: 'gavel.png',
@@ -257,9 +195,6 @@
     .then(response => response.json())
     .then(json => {
 
-    // json.feature.forEach(function(feature){
-    //   $('#output').append(feauture.properties.terms)
-    // })
 
     var markers = L.markerClusterGroup();
     json.features.forEach(function(feature){
@@ -272,52 +207,6 @@
     });
     map.addLayer(markers)
   }).addTo(map);
-
-
-  // $(document).on('click', '#output', function(e){
-  //   var newCase = e.target.value;
-  // })
-    // casesGeoJSON = L.geoJSON(json, {
-    //   style: function (feature){
-    //     return {
-    //       fillOpacity: 0.1,
-    //       fillColor: '#000',
-    //       color: '#000',
-    //       opacity: 0.3
-    //     };
-    //   }
-
-    // var markers = L.markerClusterGroup();
-    // json.features.forEach(function(feature){
-    //   console.log()
-    //   markers.addLayer(L.marker(feature.geometry.coordinates[1], feature.geometry.coordinates[0]));
-    // })
-    // map.addLayer(markers);
-
-    // var markers = L.markerClusterGroup();
-    // cases.feature.forEach(function(feature){
-    //   markers.addLayer(L.marker(feature.geometry.coordinates));
-    // })
-    // map.addLayer(markers);
-
-    // L.geoJSON(cases, {
-    //     pointToLayer: function (feature, latlng) {
-    //         return L.circleMarker(latlng, geojsonMarkerOptions);
-    //     },
-    //     onEachFeature: onEachFeature
-    // }).addTo(map);
-
-
-    // var markers = L.markerClusterGroup();
-
-
-    
-    // var clusterMapPoints = [];
-    //   json.features.forEach(function(feature){
-    //     markers.addLayer(L.marker(feature.geometry.coordinates[1], feature.geometry.coordinates[0]));
-    //   })
-    //   map.addLayer(markers);
-    //     })
       
 
     })
