@@ -24,16 +24,16 @@ all=NULL
 for(g in fileList){
   linesRead <- readLines(g, skipNul = FALSE)
   textRead <- paste(readLines(g, skipNul = FALSE), collapse=" ")
-  caseLine <- as.data.frame(linesRead[4])
-  courtLine <- as.data.frame(linesRead[5])
-  df1 <- merge(caseLine, courtLine)
-  terms <- stringr::str_extract(textRead, "Core Terms.{0,120}")
-  termsFrame <- as.data.frame(terms)
+  caseLine <- as.data.frame(linesRead[4]) #Extracts the name of the case
+  courtLine <- as.data.frame(linesRead[5]) #Extracts the court in which the case was heard
+  df1 <- merge(caseLine, courtLine) #merging case and court dataframes
+  terms <- stringr::str_extract(textRead, "Core Terms.{0,120}") #Parses the document for "Core Terms" and extracts the following 120 characters, which generally includes all of the keywords of the case.
+  termsFrame <- as.data.frame(terms) 
   df2 <- merge(df1, termsFrame)
-  overview <- stringr::str_extract(textRead, "Overview.{0,120}")
+  overview <- stringr::str_extract(textRead, "Overview.{0,120}") #Does the same thing as the Core Terms operation but with the case overview
   overviewFrame <- as.data.frame(overview)
   df3 <- merge(df1, overviewFrame)
-  romero <- stringr::str_extract(textRead, ".{0,300}Romero.{0,300}")
+  romero <- stringr::str_extract(textRead, ".{0,300}Romero.{0,300}") #Same thing as Core Terms and Overview, but with the term Romero. This extracts the text before and after "Romero" is mentioned, providing some context for how the case was cited.
   romeroFrame <- as.data.frame(romero)
   all <- merge(df2, romeroFrame)
   df <- rbind(df, all)
@@ -47,13 +47,14 @@ termsList <- for(g in fileList){
   termsFrame <- as.data.frame(terms)
 
 ###Works for geocoding court districts####
+###Uses the 'Court' column in the dataframe created above, and then uses those names as the address used to geocode each case.###
 
 courtNames <- data.frame(Address = df$`Court`,
                    stringsAsFactors = FALSE)
 
 courtAddress <- mutate_geocode(courtNames, location = Address, output = "latlona")
 
-courtsGeo <- merge(df, courtAddress)
+courtsGeo <- merge(df, courtAddress) # This adds the lat/lon data to the overdall data frame
 #########
 
 
