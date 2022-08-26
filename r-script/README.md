@@ -4,4 +4,4 @@ I'm sharing the R script I used to scrape, analyze, and geocode the data used in
 
 I downloaded all of the files from LexisNexis as .docx files and then converted them to .txt files in R. Below is an example of the text file and the resulting dataframe that I got after running the R script.
 
-![Example Dataframe](https://github.com/klausmayr/weinberg-legacy/blob/main/r-script/example-dataframe-summary.png?raw=true)
+![Example Text Document](https://github.com/klausmayr/weinberg-legacy/blob/main/r-script/example-txt-document.png?raw=true)
